@@ -25,3 +25,10 @@ class SkillDetail(APIView):
         skill = get_object_or_404(Skill, pk=pk)
         serializer = SkillSerializer(skill)
         return Response(serializer.data)
+
+    def put(self, request, pk):
+        skill = get_object_or_404(Skill, pk=pk)
+        serializer = SkillSerializer(skill, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
