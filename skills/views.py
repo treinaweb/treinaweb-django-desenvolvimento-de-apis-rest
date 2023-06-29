@@ -1,17 +1,12 @@
-import json
-from django.views import View
-from django.http import JsonResponse, HttpRequest
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from .models import Skill
+from .serializers import SkillSerializer
 
 
-class SkillList(View):
+class SkillList(APIView):
     def get(self, request):
         skills = Skill.objects.all()
-        data = [skill.to_json() for skill in skills]
-        return JsonResponse(data, safe=False)
-
-    def post(self, request: HttpRequest):
-        body = json.loads(request.body)
-        skill = Skill.objects.create(name=body["name"])
-        return JsonResponse(skill.to_json())
+        serializer = SkillSerializer(skills, many=True)
+        return Response(serializer.data)
