@@ -25,5 +25,8 @@ class Job(models.Model):
     is_active = models.BooleanField(default=True)
     skills = models.ManyToManyField("skills.Skill", related_name="jobs")
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.title

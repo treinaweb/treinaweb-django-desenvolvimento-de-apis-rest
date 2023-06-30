@@ -3,15 +3,19 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 
+from core.paginations import TWJobsPagination
+
 from .models import Job
 from .serializers import JobSerializer
 
 
 class JobList(APIView):
     def get(self, request):
-        jobs = Job.objects.filter(is_active=True)
+        paginator = TWJobsPagination()
+        qs = Job.objects.filter(is_active=True)
+        jobs = paginator.paginate_queryset(qs, request)
         serializer = JobSerializer(jobs, many=True)
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
         serializer = JobSerializer(data=request.data)
