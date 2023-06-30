@@ -7,13 +7,15 @@ from core.paginations import TWJobsPagination
 
 from .models import Job
 from .serializers import JobSerializer
+from .filters import JobFilterSet
 
 
 class JobList(APIView):
     def get(self, request):
         paginator = TWJobsPagination()
         qs = Job.objects.filter(is_active=True)
-        jobs = paginator.paginate_queryset(qs, request)
+        filter = JobFilterSet(request.GET, queryset=qs)
+        jobs = paginator.paginate_queryset(filter.qs, request)
         serializer = JobSerializer(jobs, many=True)
         return paginator.get_paginated_response(serializer.data)
 
