@@ -16,11 +16,11 @@ class JobList(APIView):
         qs = Job.objects.filter(is_active=True)
         filter = JobFilterSet(request.GET, queryset=qs)
         jobs = paginator.paginate_queryset(filter.qs, request)
-        serializer = JobSerializer(jobs, many=True)
+        serializer = JobSerializer(jobs, many=True, context={"request": request})
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
-        serializer = JobSerializer(data=request.data)
+        serializer = JobSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -32,12 +32,12 @@ class JobDetail(APIView):
 
     def get(self, request, pk):
         job = self.__get_object(pk)
-        serializer = JobSerializer(job)
+        serializer = JobSerializer(job, context={"request": request})
         return Response(serializer.data)
 
     def put(self, request, pk):
         job = self.__get_object(pk)
-        serializer = JobSerializer(job, data=request.data)
+        serializer = JobSerializer(job, data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
